@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from app.database import engine
 import app.database_model as database_model
 
-from app.routers import product
+from app.routers import product, auth
 
 
 app = FastAPI()
@@ -16,5 +16,6 @@ def greet():
     return "welcome to the world of tech :)"
 
 
-# Include router
+# Include routers
 app.include_router(product.router)
+app.include_router(auth.router)

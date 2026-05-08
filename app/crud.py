@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 import app.database_model as database_model
+from app.utils.security import hash_password
 
 
 def get_all(db: Session):
@@ -54,3 +55,20 @@ def filter_by_price(db: Session, min_price: float):
     return db.query(database_model.Product)\
              .filter(database_model.Product.price >= min_price)\
              .all()
+
+
+# User CRUD functions
+def get_user_by_email(db: Session, email: str):
+    return db.query(database_model.User).filter(database_model.User.email == email).first()
+
+
+def create_user(db: Session, user: dict):
+    hashed_password = hash_password(user["password"])
+    db_user = database_model.User(
+        email=user["email"],
+        hashed_password=hashed_password
+    )
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
