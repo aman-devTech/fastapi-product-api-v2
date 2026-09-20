@@ -12,7 +12,7 @@ pwd_context = CryptContext(
 )
 
 # JWT configuration
-SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key")  # Use environment variable
+SECRET_KEY = os.getenv("SECRET_KEY")  # Use environment variable
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
