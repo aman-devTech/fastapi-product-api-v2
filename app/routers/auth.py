@@ -13,7 +13,7 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     
-    new_user = crud.create_user(db, user.dict())
+    new_user = crud.create_user(db, user.model_dump())
     return {"message": "User created successfully", "user_id": new_user.id}
 
 @router.post("/login")

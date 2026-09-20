@@ -3,6 +3,7 @@ cleanenv/
 
 # Environment Variables
 .env
+.env.docker
 
 # Python cache
 __pycache__/

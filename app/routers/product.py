@@ -42,6 +42,14 @@ def set_cached_data(cache_key: str, data):
         pass
 
 
+def invalidate_product_cache():
+    try:
+        for cache_key in redis_client.scan_iter("products:*"):
+            redis_client.delete(cache_key)
+    except RedisError:
+        pass
+
+
 @router.get("/product")
 def get_all_products(current_user: str = Depends(verify_token), db: Session = Depends(get_db)):
     cache_key = "products:all"
@@ -65,7 +73,10 @@ def add_product(product: ProductCreate, current_user: str = Depends(verify_token
     if product.quantity < 0:
         raise HTTPException(400, "Quantity cannot be negative")
 
-    return crud.create(db, product)
+    new_product = crud.create(db, product)
+    invalidate_product_cache()
+
+    return new_product
 
 
 @router.put("/product/{id}")
@@ -82,7 +93,10 @@ def update_product(id: int, product: ProductCreate, current_user: str = Depends(
     if product.quantity < 0:
         raise HTTPException(400, "Quantity cannot be negative")
 
-    return crud.update(db, db_product, product)
+    updated_product = crud.update(db, db_product, product)
+    invalidate_product_cache()
+
+    return updated_product
 
 
 @router.delete("/product/{id}")
@@ -94,6 +108,7 @@ def delete_product(id: int, current_user: str = Depends(verify_token), db: Sessi
         raise HTTPException(404, "Product not found")
 
     crud.delete(db, db_product)
+    invalidate_product_cache()
 
     return {"message": "Product deleted successfully"}
 

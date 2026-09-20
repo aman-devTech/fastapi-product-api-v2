@@ -14,7 +14,7 @@ def get_by_id(db: Session, id: int):
 
 
 def create(db: Session, product):
-    new = database_model.Product(**product.dict())
+    new = database_model.Product(**product.model_dump())
     db.add(new)
     db.commit()
     db.refresh(new)
